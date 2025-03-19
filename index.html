@@ -28,7 +28,7 @@
             width: 100%;
             background-color: #444;
             border-radius: 5px;
-            margin-bottom: 15px;
+            margin-top: 15px;
         }
         .progress {
             height: 10px;
@@ -49,6 +49,12 @@
         button:hover {
             background-color: #45a049;
         }
+        .correct {
+            background-color: #2ecc71 !important;
+        }
+        .incorrect {
+            background-color: #e74c3c !important;
+        }
         .result {
             margin-top: 20px;
             font-size: 18px;
@@ -61,16 +67,16 @@
 <body>
 <div class="container">
     <h1>Тест по каналам в Golang</h1>
+    <p id="question"></p>
+    <div id="options"></div>
     <div class="progress-bar">
         <div class="progress" id="progress"></div>
     </div>
-    <p id="question"></p>
-    <div id="options"></div>
     <div id="result" class="result"></div>
     <div id="summary" class="hidden">
         <h2>Результаты</h2>
         <p id="correct-count"></p>
-        <p id="incorrect-list"></p>
+        <p id="incorrect-list"  style="text-align: left;"></p>
         <button onclick="restartQuiz()">Пройти снова</button>
     </div>
 </div>
@@ -295,22 +301,35 @@
         questionObj.options.forEach(option => {
             const button = document.createElement("button");
             button.textContent = option;
-            button.onclick = () => checkAnswer(option);
+            button.onclick = () => checkAnswer(button, option);
             optionsDiv.appendChild(button);
         });
 
         updateProgress();
     }
 
-    function checkAnswer(selectedOption) {
+    function checkAnswer(button, selectedOption) {
         const questionObj = questions[currentQuestionIndex];
-        if (selectedOption === questionObj.correct) {
-            correctAnswers++;
-        } else {
+        const isCorrect = selectedOption === questionObj.correct;
+
+        button.classList.add(isCorrect ? "correct" : "incorrect");
+
+        if (!isCorrect) {
             incorrectQuestions.push(questionObj);
+        } else {
+            correctAnswers++;
         }
+
+        // Подсветка правильного ответа
+        document.querySelectorAll("#options button").forEach(btn => {
+            if (btn.textContent === questionObj.correct) {
+                btn.classList.add("correct");
+            }
+            btn.disabled = true;
+        });
+
         currentQuestionIndex++;
-        setTimeout(displayQuestion, 1000);
+        setTimeout(displayQuestion, 250);
     }
 
     function updateProgress() {
@@ -325,7 +344,7 @@
         document.getElementById("summary").classList.remove("hidden");
 
         document.getElementById("correct-count").textContent = `Правильных ответов: ${correctAnswers} из ${questions.length}`;
-        const incorrectList = incorrectQuestions.map(q => `❌ ${q.question} (Правильный ответ: ${q.correct})`).join("<br>");
+        const incorrectList = incorrectQuestions.map(q => `❌ ${q.question} <br>(Правильный ответ: ${q.correct})`).join("<br><br>");
         document.getElementById("incorrect-list").innerHTML = incorrectList || "Все ответы правильные!";
     }
 
