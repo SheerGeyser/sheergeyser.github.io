@@ -100,6 +100,7 @@
         });
 
     function loadRandomQuestion() {
+        // Если все вопросы были использованы, завершаем квиз
         if (usedQuestions.length === quizData.questions.length) {
             document.getElementById('nextBtn').textContent = 'Завершить квиз';
             return;
@@ -108,9 +109,9 @@
         let randomIndex;
         do {
             randomIndex = Math.floor(Math.random() * quizData.questions.length);
-        } while (usedQuestions.includes(randomIndex));
+        } while (usedQuestions.includes(randomIndex)); // Проверяем, был ли этот вопрос уже использован
 
-        usedQuestions.push(randomIndex);
+        usedQuestions.push(randomIndex); // Добавляем использованный вопрос в массив
         currentQuestionIndex = randomIndex;
         displayQuestion();
 
@@ -121,6 +122,7 @@
         progressBar.setAttribute('aria-valuenow', progress);
         progressBar.textContent = `${usedQuestions.length} из ${quizData.questions.length}`;
     }
+
 
     function displayQuestion() {
         const question = quizData.questions[currentQuestionIndex];
