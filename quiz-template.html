@@ -124,18 +124,23 @@
     }
 
 
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
     function displayQuestion() {
         const question = quizData.questions[currentQuestionIndex];
         let questionText = question.question;
 
-        // Проверим, если в вопросе есть код, и поместим его в теги <code> для подсветки
         if (questionText.includes('`')) {
             questionText = questionText.replace(/`([^`]+)`/g, '<code class="language-go">$1</code>');
         }
 
         document.getElementById('questionText').innerHTML = questionText;
 
-        // Отображение кода, если он есть
         const codeBlock = document.getElementById('codeBlock');
         if (question.code) {
             codeBlock.innerHTML = `<pre><code class="language-go">${question.code}</code></pre>`;
@@ -143,29 +148,31 @@
             codeBlock.innerHTML = '';
         }
 
-        // Важно вызвать Prism.highlightAll() сразу после того, как код добавлен в DOM
-        Prism.highlightAll(); // Подсветка синтаксиса
+        Prism.highlightAll();
 
         const form = document.getElementById('quizForm');
         form.innerHTML = '';
-        question.answers.forEach((answer, index) => {
+
+        // Создаем массив с ответами и их индексами
+        let answers = question.answers.map((answer, index) => ({ text: answer, id: index }));
+        shuffleArray(answers); // Перемешиваем
+
+        answers.forEach((answer, index) => {
             const div = document.createElement('div');
             div.className = 'form-check mb-3';
             div.innerHTML = `
             <input class="form-check-input" type="radio" name="answer"
-                   id="answer${index}" value="${index}">
+                   id="answer${index}" value="${answer.id}">
             <label class="form-check-label" for="answer${index}">
-                ${answer}
+                ${answer.text}
             </label>
         `;
             form.appendChild(div);
         });
 
-        // Очистка предыдущего состояния
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('nextBtn').style.display = 'none';
     }
-
     function checkAnswer(e) {
         const selectedAnswer = parseInt(e.target.value);
         const question = quizData.questions[currentQuestionIndex];
