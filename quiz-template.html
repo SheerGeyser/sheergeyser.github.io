@@ -124,16 +124,25 @@
 
     function displayQuestion() {
         const question = quizData.questions[currentQuestionIndex];
-        document.getElementById('questionText').textContent = question.question;
+        let questionText = question.question;
+
+        // Проверим, если в вопросе есть код, и поместим его в теги <code> для подсветки
+        if (questionText.includes('`')) {
+            questionText = questionText.replace(/`([^`]+)`/g, '<code class="language-go">$1</code>');
+        }
+
+        document.getElementById('questionText').innerHTML = questionText;
 
         // Отображение кода, если он есть
         const codeBlock = document.getElementById('codeBlock');
         if (question.code) {
             codeBlock.innerHTML = `<pre><code class="language-go">${question.code}</code></pre>`;
-            Prism.highlightAll(); // Подсветка синтаксиса
         } else {
             codeBlock.innerHTML = '';
         }
+
+        // Важно вызвать Prism.highlightAll() сразу после того, как код добавлен в DOM
+        Prism.highlightAll(); // Подсветка синтаксиса
 
         const form = document.getElementById('quizForm');
         form.innerHTML = '';
@@ -141,12 +150,12 @@
             const div = document.createElement('div');
             div.className = 'form-check mb-3';
             div.innerHTML = `
-                    <input class="form-check-input" type="radio" name="answer"
-                           id="answer${index}" value="${index}">
-                    <label class="form-check-label" for="answer${index}">
-                        ${answer}
-                    </label>
-                `;
+            <input class="form-check-input" type="radio" name="answer"
+                   id="answer${index}" value="${index}">
+            <label class="form-check-label" for="answer${index}">
+                ${answer}
+            </label>
+        `;
             form.appendChild(div);
         });
 
