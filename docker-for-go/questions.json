@@ -1,0 +1,445 @@
+{
+  "title": "Квиз по Docker и Docker Compose для Golang-разработчика",
+  "questions": [
+    {
+      "question": "Что такое Docker и как он помогает Go-разработчикам?",
+      "answers": [
+        "Это инструмент для управления базами данных в Go",
+        "Это платформа контейнеризации для изоляции и развертывания приложений",
+        "Это компилятор для Go-кода",
+        "Это система управления версиями"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "Docker позволяет упаковывать Go-приложения с их зависимостями в контейнеры, упрощая развертывание и обеспечивая одинаковое поведение на разных средах."
+    },
+    {
+      "question": "Что делает команда `docker build`?",
+      "answers": [
+        "Запускает контейнер",
+        "Создает образ на основе Dockerfile",
+        "Удаляет существующий образ",
+        "Копирует файлы в контейнер"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker build` собирает образ из инструкций в Dockerfile, включая зависимости и код приложения."
+    },
+    {
+      "question": "Какой файл определяет инструкции для сборки Docker-образа?",
+      "answers": [
+        "docker-compose.yml",
+        "Dockerfile",
+        "go.mod",
+        "config.json"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "Dockerfile — это основной файл с инструкциями для создания образа, такими как установка зависимостей и компиляция Go-приложения."
+    },
+    {
+      "question": "Что делает команда `docker run`?",
+      "answers": [
+        "Создает новый образ",
+        "Запускает контейнер из образа",
+        "Удаляет контейнер",
+        "Обновляет зависимости в образе"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker run` запускает контейнер на основе указанного образа, выполняя команду, заданную в Dockerfile."
+    },
+    {
+      "question": "Какой базовый образ часто используется для Go-приложений?",
+      "answers": [
+        "ubuntu:latest",
+        "golang:latest",
+        "nginx:latest",
+        "python:latest"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`golang:latest` содержит инструменты Go (компилятор, зависимости), что делает его удобным для разработки и сборки Go-приложений."
+    },
+    {
+      "question": "Что такое многоступенчатая сборка (multi-stage build) в Docker?",
+      "answers": [
+        "Сборка нескольких контейнеров одновременно",
+        "Использование нескольких Dockerfile в одном проекте",
+        "Разделение сборки на этапы для уменьшения размера итогового образа",
+        "Запуск контейнера на нескольких платформах"
+      ],
+      "correctAnswerId": 2,
+      "explanation": "Многоступенчатая сборка позволяет компилировать Go-приложение в одном этапе, а затем копировать только бинарный файл в минимальный образ, уменьшая его размер."
+    },
+    {
+      "question": "Какой тег в Dockerfile указывает базовый образ?",
+      "answers": [
+        "RUN",
+        "FROM",
+        "COPY",
+        "CMD"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`FROM` задает базовый образ, например `FROM golang:1.21`, от которого начинается сборка."
+    },
+    {
+      "question": "Как скопировать исходный код Go в образ?",
+      "answers": [
+        "COPY . /app",
+        "RUN go get",
+        "ADD go.mod /app",
+        "FROM /app"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`COPY . /app` копирует файлы из текущей директории в указанную директорию контейнера, например `/app`."
+    },
+    {
+      "question": "Что делает команда `CMD` в Dockerfile?",
+      "answers": [
+        "Устанавливает рабочую директорию",
+        "Задает команду, выполняемую при запуске контейнера",
+        "Копирует файлы в образ",
+        "Компилирует Go-код"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`CMD` указывает, какая команда будет выполнена при старте контейнера, например запуск Go-приложения."
+    },
+    {
+      "question": "Какой флаг позволяет запустить контейнер в фоновом режиме?",
+      "answers": [
+        "--rm",
+        "-d",
+        "-it",
+        "--build"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`-d` (detached) запускает контейнер в фоновом режиме, не привязываясь к терминалу."
+    },
+    {
+      "question": "Что делает команда `docker ps`?",
+      "answers": [
+        "Показывает список всех образов",
+        "Показывает список запущенных контейнеров",
+        "Удаляет остановленные контейнеры",
+        "Создает новый контейнер"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker ps` отображает активные контейнеры. С флагом `-a` показывает все контейнеры, включая остановленные."
+    },
+    {
+      "question": "Какой флаг команды `docker run` открывает интерактивный терминал?",
+      "answers": [
+        "-d",
+        "-it",
+        "--rm",
+        "--name"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`-it` позволяет взаимодействовать с контейнером через терминал, что полезно для отладки."
+    },
+    {
+      "question": "Как установить зависимости Go в Dockerfile?",
+      "answers": [
+        "RUN go mod download",
+        "COPY go.mod",
+        "CMD go get",
+        "FROM golang:deps"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`RUN go mod download` загружает зависимости, указанные в `go.mod`, в процессе сборки образа."
+    },
+    {
+      "question": "Что делает команда `docker stop`?",
+      "answers": [
+        "Удаляет контейнер",
+        "Останавливает запущенный контейнер",
+        "Перезапускает контейнер",
+        "Создает новый контейнер"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker stop` останавливает контейнер, отправляя сигнал завершения процесса."
+    },
+    {
+      "question": "Как удалить остановленный контейнер?",
+      "answers": [
+        "docker rm <container_id>",
+        "docker stop <container_id>",
+        "docker kill <container_id>",
+        "docker rmi <container_id>"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`docker rm` удаляет контейнер по его ID или имени, но только если он остановлен."
+    },
+    {
+      "question": "Что такое Docker Compose?",
+      "answers": [
+        "Инструмент для управления несколькими контейнерами",
+        "Язык программирования для Docker",
+        "Система сборки образов",
+        "Плагин для Go"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Docker Compose позволяет определять и запускать несколько связанных контейнеров (например, Go-приложение и базу данных) через один файл конфигурации."
+    },
+    {
+      "question": "Какой файл используется для настройки Docker Compose?",
+      "answers": [
+        "Dockerfile",
+        "docker-compose.yml",
+        "go.mod",
+        "compose.json"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker-compose.yml` содержит конфигурацию сервисов, сетей и томов для Docker Compose."
+    },
+    {
+      "question": "Как запустить все сервисы, описанные в Docker Compose?",
+      "answers": [
+        "docker run",
+        "docker-compose up",
+        "docker build",
+        "docker-compose build"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker-compose up` запускает все сервисы, определенные в `docker-compose.yml`."
+    },
+    {
+      "question": "Как пересобрать и перезапустить сервисы в Docker Compose?",
+      "answers": [
+        "docker-compose restart",
+        "docker-compose up --build",
+        "docker-compose down",
+        "docker build"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker-compose up --build` пересобирает образы и запускает сервисы заново."
+    },
+    {
+      "question": "Что делает команда `docker-compose down`?",
+      "answers": [
+        "Останавливает и удаляет контейнеры, сети",
+        "Запускает сервисы в фоновом режиме",
+        "Обновляет зависимости",
+        "Создает новые образы"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`docker-compose down` останавливает и удаляет все ресурсы, созданные `docker-compose up`."
+    },
+    {
+      "question": "Как указать порт для Go-приложения в Docker Compose?",
+      "answers": [
+        "EXPOSE 8080",
+        "ports: - '8080:8080'",
+        "CMD --port 8080",
+        "RUN port=8080"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "В `docker-compose.yml` секция `ports` сопоставляет порты хоста и контейнера, например `'8080:8080'`."
+    },
+    {
+      "question": "Какой образ лучше использовать для финального этапа многоступенчатой сборки Go-приложения?",
+      "answers": [
+        "golang:latest",
+        "ubuntu:latest",
+        "alpine:latest",
+        "debian:latest"
+      ],
+      "correctAnswerId": 2,
+      "explanation": "`alpine:latest` — минималистичный образ, идеально подходящий для компактного развертывания Go-приложений."
+    },
+    {
+      "question": "Что делает директива `WORKDIR` в Dockerfile?",
+      "answers": [
+        "Устанавливает рабочую директорию для команд",
+        "Копирует файлы в образ",
+        "Задает порт приложения",
+        "Компилирует Go-код"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`WORKDIR /app` задает рабочую директорию, где выполняются команды вроде `COPY` или `RUN`."
+    },
+    {
+      "question": "Как посмотреть логи контейнера?",
+      "answers": [
+        "docker logs <container_id>",
+        "docker ps -a",
+        "docker inspect <container_id>",
+        "docker run logs"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`docker logs` показывает вывод контейнера, полезный для отладки Go-приложений."
+    },
+    {
+      "question": "Что делает команда `docker images`?",
+      "answers": [
+        "Показывает список запущенных контейнеров",
+        "Показывает список всех образов",
+        "Удаляет образы",
+        "Создает новый образ"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker images` отображает доступные образы на локальной машине."
+    },
+    {
+      "question": "Как удалить образ Docker?",
+      "answers": [
+        "docker rm <image_id>",
+        "docker rmi <image_id>",
+        "docker delete <image_id>",
+        "docker stop <image_id>"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker rmi` удаляет указанный образ, если он не используется контейнерами."
+    },
+    {
+      "question": "Как передать переменные окружения в контейнер?",
+      "answers": [
+        "ENV в Dockerfile",
+        "-e в docker run",
+        "environment в docker-compose.yml",
+        "Все варианты выше"
+      ],
+      "correctAnswerId": 3,
+      "explanation": "Переменные окружения можно задавать через `ENV`, флаг `-e` или секцию `environment` в Compose."
+    },
+    {
+      "question": "Что делает директива `EXPOSE` в Dockerfile?",
+      "answers": [
+        "Открывает порт на хосте",
+        "Документирует порт, который использует приложение",
+        "Запускает приложение на указанном порту",
+        "Копирует порт в контейнер"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`EXPOSE` указывает, какой порт использует приложение, но не публикует его на хосте."
+    },
+    {
+      "question": "Как подключить том (volume) для хранения данных в Docker?",
+      "answers": [
+        "volumes: - /data",
+        "-v /host:/container",
+        "EXPOSE /data",
+        "COPY /data"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`-v /host:/container` монтирует директорию хоста в контейнер для постоянного хранения данных."
+    },
+    {
+      "question": "Как запустить Go-приложение в контейнере с пересборкой при изменениях кода?",
+      "answers": [
+        "docker run --reload",
+        "Использовать инструмент вроде `air` с volume",
+        "docker-compose restart",
+        "CMD go run"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "Инструмент `air` с монтированным томом позволяет перезапускать Go-приложение при изменении кода."
+    },
+    {
+      "question": "Что такое Docker Hub?",
+      "answers": [
+        "Локальный сервер для хранения контейнеров",
+        "Облачный репозиторий для Docker-образов",
+        "Инструмент для создания Dockerfile",
+        "Плагин для Docker Compose"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "Docker Hub — это облачный сервис для хранения и распространения Docker-образов."
+    },
+    {
+      "question": "Как опубликовать образ в Docker Hub?",
+      "answers": [
+        "docker push <username>/<image>",
+        "docker upload <image>",
+        "docker compose push",
+        "docker run --publish"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`docker push` загружает образ в репозиторий Docker Hub после авторизации."
+    },
+    {
+      "question": "Как проверить зависимости в Go-модуле перед сборкой?",
+      "answers": [
+        "go mod tidy",
+        "go build",
+        "docker check",
+        "RUN go deps"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`go mod tidy` приводит зависимости в порядок, удаляя неиспользуемые и добавляя недостающие."
+    },
+    {
+      "question": "Что делает флаг `--rm` в `docker run`?",
+      "answers": [
+        "Удаляет контейнер после остановки",
+        "Перезапускает контейнер",
+        "Удаляет образ",
+        "Запускает контейнер в фоновом режиме"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`--rm` автоматически удаляет контейнер после его завершения, что полезно для тестов."
+    },
+    {
+      "question": "Как указать версию Go в Dockerfile?",
+      "answers": [
+        "FROM golang:1.21",
+        "VERSION go 1.21",
+        "RUN go version 1.21",
+        "CMD go 1.21"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`FROM golang:1.21` задает образ с конкретной версией Go для сборки."
+    },
+    {
+      "question": "Какой файл игнорируется при копировании в Docker?",
+      "answers": [
+        "go.mod",
+        ".dockerignore",
+        "Dockerfile",
+        ".gitignore"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`.dockerignore` указывает файлы и директории, которые не копируются в образ, ускоряя сборку."
+    },
+    {
+      "question": "Как связать сервисы в Docker Compose?",
+      "answers": [
+        "Через depends_on",
+        "EXPOSE ports",
+        "COPY services",
+        "RUN link"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`depends_on` в `docker-compose.yml` задает зависимости между сервисами, обеспечивая порядок запуска."
+    },
+    {
+      "question": "Как выполнить команду внутри запущенного контейнера?",
+      "answers": [
+        "docker exec -it <container_id> <command>",
+        "docker run <command>",
+        "docker compose exec <command>",
+        "Все варианты выше"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`docker exec` позволяет выполнять команды (например, `bash`) в уже запущенном контейнере."
+    },
+    {
+      "question": "Что делает команда `docker inspect`?",
+      "answers": [
+        "Показывает логи контейнера",
+        "Предоставляет подробную информацию о контейнере или образе",
+        "Удаляет контейнер",
+        "Запускает контейнер"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`docker inspect` выводит метаданные, такие как конфигурация, сеть и состояние."
+    },
+    {
+      "question": "Как оптимизировать Dockerfile для Go-приложения?",
+      "answers": [
+        "Использовать многоступенчатую сборку",
+        "Копировать все файлы сразу",
+        "Использовать тяжелые образы вроде ubuntu",
+        "Запускать go run вместо бинарника"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Многоступенчатая сборка минимизирует размер образа, включая только скомпилированный бинарник."
+    }
+  ]
+}
