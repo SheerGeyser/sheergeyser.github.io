@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квиз</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Prism.js для подсветки синтаксиса -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <style>
+        .feedback {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .correct-feedback {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .wrong-feedback {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .next-btn {
+            display: none;
+            margin-top: 15px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .button-container {
+            position: relative;
+            margin-top: 15px;
+        }
+        .report-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0" id="quizTitle"></h3>
+        </div>
+        <div class="card-body">
+            <div class="progress mb-4">
+                <div class="progress-bar" role="progressbar" id="progressBar" style="width: 0%;"
+                     aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <h5 class="mb-4" id="questionText"></h5>
+            <div id="codeBlock" class="mb-4"></div>
+
+            <form id="quizForm"></form>
+            <div id="feedback" class="feedback"></div>
+            <div class="button-container">
+                <button type="button" class="btn btn-primary next-btn" id="nextBtn">Следующий вопрос</button>
+                <button type="button" class="btn btn-danger report-btn" id="reportBtn">Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+<!-- marked.js для рендеринга Markdown -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+<script>
+    let quizData = {};
+    let currentQuestionIndex = 0;
+    let usedQuestions = [];
+
+    // Получение параметра quiz из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const quizFolder = urlParams.get('quiz');
+
+    // Загрузка данных из JSON
+    fetch(`${quizFolder}/questions.json`)
+        .then(response => {
+            if (!response.ok) throw new Error('Квиз не найден');
+            return response.json();
+        })
+        .then(data => {
+            quizData = data;
+            document.getElementById('quizTitle').textContent = quizData.title;
+            loadRandomQuestion();
+        })
+        .catch(error => {
+            window.location.href = 'index.html';
+        });
+
+    function loadRandomQuestion() {
+        if (usedQuestions.length === quizData.questions.length) {
+            document.getElementById('nextBtn').textContent = 'Завершить квиз';
+            return;
+        }
+
+        let randomIndex;
+        do {
+            randomIndex = Math.floor(Math.random() * quizData.questions.length);
+        } while (usedQuestions.includes(randomIndex));
+
+        usedQuestions.push(randomIndex);
+        currentQuestionIndex = randomIndex;
+        displayQuestion();
+
+        // Обновление прогресс-бара
+        const progress = (usedQuestions.length / quizData.questions.length) * 100;
+        const progressBar = document.getElementById('progressBar');
+        progressBar.style.width = `${progress}%`;
+        progressBar.setAttribute('aria-valuenow', progress);
+        progressBar.textContent = `${usedQuestions.length} из ${quizData.questions.length}`;
+    }
+
+    function displayQuestion() {
+        const question = quizData.questions[currentQuestionIndex];
+        document.getElementById('questionText').textContent = question.question;
+
+        // Отображение кода, если он есть
+        const codeBlock = document.getElementById('codeBlock');
+        if (question.code) {
+            codeBlock.innerHTML = `<pre><code class="language-go">${question.code}</code></pre>`;
+            Prism.highlightAll(); // Подсветка синтаксиса
+        } else {
+            codeBlock.innerHTML = '';
+        }
+
+        const form = document.getElementById('quizForm');
+        form.innerHTML = '';
+        question.answers.forEach((answer, index) => {
+            const div = document.createElement('div');
+            div.className = 'form-check mb-3';
+            div.innerHTML = `
+                    <input class="form-check-input" type="radio" name="answer"
+                           id="answer${index}" value="${index}">
+                    <label class="form-check-label" for="answer${index}">
+                        ${answer}
+                    </label>
+                `;
+            form.appendChild(div);
+        });
+
+        // Очистка предыдущего состояния
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+    }
+
+    function checkAnswer(e) {
+        const selectedAnswer = parseInt(e.target.value);
+        const question = quizData.questions[currentQuestionIndex];
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+
+        // Формируем текст обратной связи с поддержкой Markdown
+        const feedbackPrefix = selectedAnswer === question.correctAnswerId ? 'Правильно! ' : 'Неверно. ';
+        const explanationMarkdown = marked.parse(question.explanation); // Рендерим Markdown в HTML
+
+        if (selectedAnswer === question.correctAnswerId) {
+            feedback.className = 'feedback correct-feedback';
+        } else {
+            feedback.className = 'feedback wrong-feedback';
+        }
+
+        // Вставляем текст обратной связи с пояснением как HTML
+        feedback.innerHTML = feedbackPrefix + explanationMarkdown;
+        Prism.highlightAll(); // Подсвечиваем код внутри пояснения
+
+        feedback.style.display = 'block';
+        nextBtn.style.display = 'block';
+        document.querySelectorAll('input[name="answer"]').forEach(input => {
+            input.disabled = true;
+        });
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', function() {
+        if (usedQuestions.length === quizData.questions.length) {
+            alert('Квиз завершен!');
+            window.location.href = 'index.html';
+        } else {
+            loadRandomQuestion();
+        }
+    });
+
+    // Добавление обработчиков для radio buttons
+    document.addEventListener('change', function(e) {
+        if (e.target.name === 'answer') {
+            checkAnswer(e);
+        }
+    });
+
+    // Логика для кнопки Report
+    document.getElementById('reportBtn').addEventListener('click', function() {
+        const question = quizData.questions[currentQuestionIndex];
+        const issueTitle = `ОШИБКА В ВОПРОСЕ: ${question.question}`;
+        const issueBody = `Проблема с вопросом:\n\n**Вопрос:** ${question.question}\n\n**Варианты ответа:**\n${question.answers.map((answer, index) => `${index}. ${answer}`).join('\n')}\n\n**Правильный ответ:** ${question.correctAnswerId}\n\n**Пояснение:** ${question.explanation}`;
+        const url = `https://github.com/SheerGeyser/sheergeyser.github.io/issues/new?title=${encodeURIComponent(issueTitle)}&body=${encodeURIComponent(issueBody)}`;
+        window.open(url, '_blank'); // Открываем в новой вкладке
+    });
+</script>
+</body>
+</html>

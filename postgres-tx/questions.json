@@ -1,0 +1,185 @@
+{
+  "title": "Квиз по транзакциям в PostgreSQL",
+  "questions": [
+    {
+      "question": "Что такое транзакция в PostgreSQL?",
+      "answers": ["Набор случайных запросов", "Единая атомарная операция над данными", "Механизм блокировки", "Кэш данных"],
+      "correctAnswerId": 1,
+      "explanation": "Транзакция — это последовательность операций, выполняемых как единое целое, обеспечивая свойства ACID."
+    },
+    {
+      "question": "Какое свойство ACID гарантирует, что транзакция либо полностью выполняется, либо не выполняется вовсе?",
+      "answers": ["Atomicity", "Consistency", "Isolation", "Durability"],
+      "correctAnswerId": 0,
+      "explanation": "Atomicity (Атомарность) гарантирует, что все операции транзакции выполняются полностью или откатываются."
+    },
+    {
+      "question": "Как начать транзакцию в PostgreSQL?",
+      "answers": ["START", "BEGIN", "OPEN", "TRANSACT"],
+      "correctAnswerId": 1,
+      "explanation": "Команда BEGIN начинает новую транзакцию в PostgreSQL."
+    },
+    {
+      "question": "Какой уровень изоляции является стандартным в PostgreSQL?",
+      "answers": ["Read Uncommitted", "Read Committed", "Repeatable Read", "Serializable"],
+      "correctAnswerId": 1,
+      "explanation": "Read Committed — это уровень изоляции по умолчанию в PostgreSQL."
+    },
+    {
+      "question": "Какой уровень изоляции в PostgreSQL не реализован полностью, а работает как Read Committed?",
+      "answers": ["Read Uncommitted", "Repeatable Read", "Serializable", "Read Only"],
+      "correctAnswerId": 0,
+      "explanation": "Read Uncommitted в PostgreSQL работает как Read Committed из-за архитектуры MVCC."
+    },
+    {
+      "question": "Какой уровень изоляции предотвращает все аномалии, включая сериализационные?",
+      "answers": ["Read Committed", "Repeatable Read", "Serializable", "Read Uncommitted"],
+      "correctAnswerId": 2,
+      "explanation": "Serializable — самый строгий уровень, предотвращающий все аномалии за счет Serializable Snapshot Isolation."
+    },
+    {
+      "question": "Что произойдет при попытке изменить уровень изоляции после первой операции в транзакции?",
+      "answers": ["Успешно изменится", "Ошибка", "Ничего не произойдет", "Транзакция завершится"],
+      "correctAnswerId": 1,
+      "explanation": "Уровень изоляции нельзя изменить после начала выполнения запросов в транзакции."
+    },
+    {
+      "question": "Что такое Dirty Read (грязное чтение)?",
+      "answers": ["Чтение устаревших данных", "Чтение незафиксированных изменений", "Чтение данных после коммита", "Чтение фантомных строк"],
+      "correctAnswerId": 1,
+      "explanation": "Dirty Read — это чтение данных, измененных другой транзакцией, которая еще не зафиксирована."
+    },
+    {
+      "question": "На каком уровне изоляции в PostgreSQL возможно грязное чтение?",
+      "answers": ["Read Committed", "Repeatable Read", "Serializable", "Никаком"],
+      "correctAnswerId": 3,
+      "explanation": "Грязное чтение невозможно в PostgreSQL на любом уровне изоляции благодаря MVCC."
+    },
+    {
+      "question": "Что такое Non-Repeatable Read (неповторяемое чтение)?",
+      "answers": ["Чтение разных версий строки в одной транзакции", "Чтение фантомных строк", "Чтение незафиксированных данных", "Потеря обновлений"],
+      "correctAnswerId": 0,
+      "explanation": "Non-Repeatable Read — это когда повторное чтение строки в одной транзакции дает разные результаты из-за изменений другой транзакции."
+    },
+    {
+      "question": "Какой уровень изоляции предотвращает Non-Repeatable Read?",
+      "answers": ["Read Committed", "Repeatable Read", "Read Uncommitted", "Все уровни"],
+      "correctAnswerId": 1,
+      "explanation": "Repeatable Read использует снимок данных, предотвращая неповторяемое чтение."
+    },
+    {
+      "question": "Что такое Phantom Read (фантомное чтение)?",
+      "answers": ["Чтение незафиксированных данных", "Появление новых строк при повторном запросе", "Изменение существующих строк", "Потеря обновлений"],
+      "correctAnswerId": 1,
+      "explanation": "Phantom Read — это появление новых строк при повторном запросе из-за действий другой транзакции."
+    },
+    {
+      "question": "Какой уровень изоляции в PostgreSQL предотвращает Phantom Read?",
+      "answers": ["Read Committed", "Repeatable Read", "Serializable", "Read Uncommitted"],
+      "correctAnswerId": 2,
+      "explanation": "Serializable предотвращает фантомное чтение, хотя Repeatable Read в PostgreSQL тоже это делает благодаря MVCC."
+    },
+    {
+      "question": "Что такое Serialization Anomaly (аномалия сериализации)?",
+      "answers": ["Чтение устаревших данных", "Несоответствие результата параллельных транзакций последовательному выполнению", "Потеря обновлений", "Грязное чтение"],
+      "correctAnswerId": 1,
+      "explanation": "Serialization Anomaly — это когда результат параллельных транзакций не соответствует их последовательному выполнению."
+    },
+    {
+      "question": "Какой уровень изоляции устраняет Serialization Anomaly?",
+      "answers": ["Read Committed", "Repeatable Read", "Serializable", "Все уровни"],
+      "correctAnswerId": 2,
+      "explanation": "Serializable использует SSI для предотвращения аномалий сериализации."
+    },
+    {
+      "question": "Что такое Write Skew (смещение записи)?",
+      "answers": ["Потеря обновлений", "Чтение фантомных строк", "Нарушение целостности из-за параллельных записей", "Грязное чтение"],
+      "correctAnswerId": 2,
+      "explanation": "Write Skew возникает, когда две транзакции читают пересекающиеся данные и записывают конфликтующие изменения."
+    },
+    {
+      "question": "Какой уровень изоляции предотвращает Write Skew?",
+      "answers": ["Read Committed", "Repeatable Read", "Serializable", "Read Uncommitted"],
+      "correctAnswerId": 2,
+      "explanation": "Serializable предотвращает Write Skew через механизм Serializable Snapshot Isolation."
+    },
+    {
+      "question": "Что делает команда SELECT FOR UPDATE?",
+      "answers": ["Читает данные без блокировки", "Блокирует строки для обновления", "Закрывает транзакцию", "Создает снимок"],
+      "correctAnswerId": 1,
+      "explanation": "SELECT FOR UPDATE блокирует выбранные строки, предотвращая их изменение другими транзакциями."
+    },
+    {
+      "question": "Какой тип блокировки используется в SELECT FOR SHARE?",
+      "answers": ["Эксклюзивная", "Совместная", "Предикатная", "Отсутствует"],
+      "correctAnswerId": 1,
+      "explanation": "SELECT FOR SHARE устанавливает совместную блокировку, позволяя чтение, но не изменение."
+    },
+    {
+      "question": "Что произойдет, если две транзакции одновременно выполнят SELECT FOR UPDATE на одну строку?",
+      "answers": ["Обе выполнятся", "Одна заблокируется", "Произойдет deadlock", "Ошибка"],
+      "correctAnswerId": 1,
+      "explanation": "Одна транзакция будет ждать, пока другая не завершится, из-за эксклюзивной блокировки."
+    },
+    {
+      "question": "Какой механизм PostgreSQL использует для управления параллелизмом?",
+      "answers": ["MVCC", "Two-Phase Locking", "Optimistic Locking", "Pessimistic Locking"],
+      "correctAnswerId": 0,
+      "explanation": "PostgreSQL использует Multi-Version Concurrency Control (MVCC) для управления параллелизмом."
+    },
+    {
+      "question": "Что произойдет при COMMIT в случае успешной транзакции?",
+      "answers": ["Изменения откатятся", "Изменения зафиксируются", "Транзакция повторится", "Ничего не произойдет"],
+      "correctAnswerId": 1,
+      "explanation": "COMMIT фиксирует все изменения, сделанные в транзакции."
+    },
+    {
+      "question": "Что делает команда ROLLBACK?",
+      "answers": ["Фиксирует изменения", "Откатывает изменения", "Блокирует данные", "Повторяет транзакцию"],
+      "correctAnswerId": 1,
+      "explanation": "ROLLBACK отменяет все изменения, сделанные в текущей транзакции."
+    },
+    {
+      "question": "Что произойдет при сбое транзакции на уровне Serializable?",
+      "answers": ["Serialization failure", "Deadlock", "Dirty Read", "Commit"],
+      "correctAnswerId": 0,
+      "explanation": "При нарушении сериализации транзакция откатывается с ошибкой serialization_failure."
+    },
+    {
+      "question": "Что такое Deadlock в PostgreSQL?",
+      "answers": ["Ошибка сериализации", "Вечная блокировка", "Взаимная блокировка транзакций", "Потеря данных"],
+      "correctAnswerId": 2,
+      "explanation": "Deadlock — это ситуация, когда две транзакции блокируют друг друга, ожидая освобождения ресурсов."
+    },
+    {
+      "question": "Как PostgreSQL обрабатывает Deadlock?",
+      "answers": ["Откатывает одну из транзакций", "Ждет бесконечно", "Фиксирует обе", "Вызывает панику"],
+      "correctAnswerId": 0,
+      "explanation": "PostgreSQL автоматически обнаруживает deadlock и откатывает одну из транзакций."
+    },
+    {
+      "question": "Какой код ошибки возвращается при serialization failure?",
+      "answers": ["40001", "40002", "40P01", "42P01"],
+      "correctAnswerId": 0,
+      "explanation": "Serialization failure возвращает SQLSTATE 40001."
+    },
+    {
+      "question": "Что такое Predicate Locking в Serializable?",
+      "answers": ["Блокировка строк", "Блокировка условий запроса", "Совместная блокировка", "Эксклюзивная блокировка"],
+      "correctAnswerId": 1,
+      "explanation": "Predicate Locking блокирует условия запроса для предотвращения фантомов в Serializable."
+    },
+    {
+      "question": "Какой уровень изоляции требует меньше всего блокировок?",
+      "answers": ["Read Committed", "Repeatable Read", "Serializable", "Read Uncommitted"],
+      "correctAnswerId": 0,
+      "explanation": "Read Committed использует меньше блокировок, полагаясь на MVCC."
+    },
+    {
+      "question": "Может ли транзакция в Read Committed видеть изменения другой завершенной транзакции?",
+      "answers": ["Да", "Нет", "Только в Serializable", "Только при блокировке"],
+      "correctAnswerId": 0,
+      "explanation": "Read Committed видит изменения, зафиксированные другими транзакциями во время выполнения."
+    }
+  ]
+}
