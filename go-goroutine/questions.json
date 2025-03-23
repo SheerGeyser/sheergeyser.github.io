@@ -22,7 +22,7 @@
     },
     {
       "question": "Что выведет следующий код?",
-      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    for i := 0; i < 3; i++ {\n        go fmt.Println(i)\n    }\n    time.Sleep(1)\n}",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    for i := 0; i < 3; i++ {\n        go fmt.Println(i)\n    }\n    time.Sleep(5 * time.Second)\n}",
       "answers": ["0, 1, 2 по порядку", "0, 1, 2 в любом порядке", "Только 3", "Ничего"],
       "correctAnswerId": 1,
       "explanation": "Порядок выполнения горутин не гарантирован, вывод зависит от планировщика."
