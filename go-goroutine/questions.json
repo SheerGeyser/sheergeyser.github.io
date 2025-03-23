@@ -1,0 +1,210 @@
+{
+  "title": "Квиз по горутинам в Go",
+  "questions": [
+    {
+      "question": "Что такое горутина в Go?",
+      "answers": ["Лёгкий поток, управляемый runtime", "Поток ОС", "Синхронная функция", "Канал связи"],
+      "correctAnswerId": 0,
+      "explanation": "Горутина — это лёгкий поток, управляемый runtime Go, с минимальным начальным стеком (8 KB в Go 1.22)."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    go fmt.Println(\"Hello\")\n    fmt.Println(\"Main\")\n}",
+      "answers": ["'Hello', затем 'Main'", "'Main'", "Порядок не определён", "Паника"],
+      "correctAnswerId": 1,
+      "explanation": "Горутина запускается асинхронно, и main завершится до её выполнения без синхронизации."
+    },
+    {
+      "question": "Как правильно дождаться завершения горутины?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    go fmt.Println(\"Hello\")\n    // Что добавить сюда?\n    fmt.Println(\"Main\")\n}",
+      "answers": ["time.Sleep(1)", "sync.WaitGroup", "runtime.Gosched()", "close(ch)"],
+      "correctAnswerId": 1,
+      "explanation": "sync.WaitGroup — надёжный способ ожидания завершения горутин."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    for i := 0; i < 3; i++ {\n        go fmt.Println(i)\n    }\n    time.Sleep(1)\n}",
+      "answers": ["0, 1, 2 по порядку", "0, 1, 2 в любом порядке", "Только 3", "Ничего"],
+      "correctAnswerId": 1,
+      "explanation": "Порядок выполнения горутин не гарантирован, вывод зависит от планировщика."
+    },
+    {
+      "question": "Почему этот код вызывает панику?",
+      "code": "package main\n\nfunc main() {\n    var ch chan int\n    go func() { ch <- 1 }()\n    <-ch\n}",
+      "answers": ["Канал не инициализирован", "Горутина не запущена", "Канал закрыт", "Переменная ch nil"],
+      "correctAnswerId": 0,
+      "explanation": "Канал нужно создать с помощью `make(chan int)`, иначе он nil, и запись вызывает панику."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int)\n    go func() { ch <- 1 }()\n    fmt.Println(<-ch)\n}",
+      "answers": ["1", "0", "Паника", "Deadlock"],
+      "correctAnswerId": 0,
+      "explanation": "Канал синхронизирует горутину и main, выводится 1."
+    },
+    {
+      "question": "Что произойдёт в этом коде?",
+      "code": "package main\n\nfunc main() {\n    ch := make(chan int)\n    go func() {\n        for i := 0; i < 3; i++ { ch <- i }\n    }()\n    for v := range ch {\n        _ = v\n    }\n}",
+      "answers": ["Выведет 0, 1, 2", "Deadlock", "Паника", "Бесконечный цикл"],
+      "correctAnswerId": 1,
+      "explanation": "`range` ждёт закрытия канала, но оно не происходит, возникает deadlock."
+    },
+    {
+      "question": "Как исправить deadlock в этом коде?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int)\n    go func() {\n        for i := 0; i < 3; i++ { ch <- i }\n    }()\n    for v := range ch {\n        fmt.Println(v)\n    }\n}",
+      "answers": ["Добавить close(ch)", "Убрать range", "Добавить time.Sleep", "Использовать буфер"],
+      "correctAnswerId": 0,
+      "explanation": "Закрытие канала (`close(ch)`) в горутине после отправки данных решает проблему."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int, 1)\n    ch <- 1\n    go func() { ch <- 2 }()\n    fmt.Println(<-ch)\n}",
+      "answers": ["1", "2", "Паника", "Deadlock"],
+      "correctAnswerId": 0,
+      "explanation": "Буфер позволяет записать 1, горутина блокируется, main читает 1."
+    },
+    {
+      "question": "Что делает runtime.Goexit()?",
+      "answers": ["Завершает программу", "Завершает текущую горутину", "Перезапускает горутину", "Закрывает канал"],
+      "correctAnswerId": 1,
+      "explanation": "runtime.Goexit() завершает только текущую горутину, не влияя на другие."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    var wg sync.WaitGroup\n    wg.Add(1)\n    go func() {\n        fmt.Println(\"Goroutine\")\n        wg.Done()\n    }()\n    wg.Wait()\n    fmt.Println(\"Main\")\n}",
+      "answers": ["'Goroutine', затем 'Main'", "'Main', затем 'Goroutine'", "Только 'Main'", "Паника"],
+      "correctAnswerId": 0,
+      "explanation": "WaitGroup синхронизирует выполнение, сначала горутина, затем main."
+    },
+    {
+      "question": "Почему этот код вызывает гонку данных?",
+      "code": "package main\n\nfunc main() {\n    var x int\n    go func() { x = 1 }()\n    x = 2\n}",
+      "answers": ["Нет синхронизации", "Канал не используется", "Переменная x nil", "Горутина не завершена"],
+      "correctAnswerId": 0,
+      "explanation": "Одновременный доступ к x без синхронизации вызывает data race."
+    },
+    {
+      "question": "Как избежать гонки данных в этом коде?",
+      "code": "package main\n\nfunc main() {\n    var x int\n    go func() { x = 1 }()\n    x = 2\n}",
+      "answers": ["Добавить sync.Mutex", "Использовать канал", "Добавить sync.WaitGroup", "Обе 1 и 2"],
+      "correctAnswerId": 3,
+      "explanation": "Mutex или канал могут синхронизировать доступ к x."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int)\n    close(ch)\n    go func() { ch <- 1 }()\n    time.Sleep(1)\n}",
+      "answers": ["1", "Паника", "Deadlock", "Ничего"],
+      "correctAnswerId": 1,
+      "explanation": "Запись в закрытый канал вызывает панику."
+    },
+    {
+      "question": "Что произойдёт в этом коде?",
+      "code": "package main\n\nfunc main() {\n    ch := make(chan int)\n    go func() { close(ch) }()\n    ch <- 1\n}",
+      "answers": ["Запишет 1", "Паника", "Deadlock", "Ничего"],
+      "correctAnswerId": 2,
+      "explanation": "Запись в канал блокирует main, а закрытие канала другой горутиной не успевает, возникает deadlock."
+    },
+    {
+      "question": "Какой начальный размер стека горутины в Go 1.22?",
+      "answers": ["2 KB", "4 KB", "8 KB", "16 KB"],
+      "correctAnswerId": 2,
+      "explanation": "В Go 1.22 начальный размер стека горутины — 8 KB, он динамически растёт."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int, 2)\n    go func() {\n        ch <- 1\n        ch <- 2\n        ch <- 3\n    }()\n    fmt.Println(<-ch)\n    time.Sleep(1)\n}",
+      "answers": ["1", "2", "3", "Deadlock"],
+      "correctAnswerId": 0,
+      "explanation": "Буфер на 2 элемента, горутина записывает 1 и 2, main читает 1, затем горутина блокируется на 3."
+    },
+    {
+      "question": "Что делает runtime.Gosched()?",
+      "answers": ["Завершает горутину", "Уступает управление планировщику", "Создаёт новую горутину", "Закрывает канал"],
+      "correctAnswerId": 1,
+      "explanation": "runtime.Gosched() даёт шанс другим горутинам выполниться."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    for i := 0; i < 3; i++ {\n        go func() { fmt.Println(i) }()\n    }\n    time.Sleep(1)\n}",
+      "answers": ["0, 1, 2", "3, 3, 3", "Порядок не определён", "Ничего"],
+      "correctAnswerId": 1,
+      "explanation": "Горутины захватывают i по ссылке, и к моменту их выполнения цикл завершает i = 3."
+    },
+    {
+      "question": "Как исправить этот код, чтобы вывести 0, 1, 2?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    for i := 0; i < 3; i++ {\n        go func() { fmt.Println(i) }()\n    }\n    time.Sleep(1)\n}",
+      "answers": ["Передать i в функцию", "Добавить sync.Mutex", "Использовать канал", "Убрать go"],
+      "correctAnswerId": 0,
+      "explanation": "Передача i как аргумента (`go func(x int) { fmt.Println(x) }(i)`) решает проблему."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int)\n    go func() {\n        fmt.Println(<-ch)\n    }()\n    close(ch)\n    time.Sleep(1)\n}",
+      "answers": ["0", "Паника", "Deadlock", "Ничего"],
+      "correctAnswerId": 0,
+      "explanation": "Чтение из закрытого канала возвращает нулевое значение типа (0 для int)."
+    },
+    {
+      "question": "Что произойдёт в этом коде?",
+      "code": "package main\n\nfunc main() {\n    ch1 := make(chan int)\n    ch2 := make(chan int)\n    go func() { ch1 <- <-ch2 }()\n    ch2 <- 1\n    <-ch1\n}",
+      "answers": ["Успешно завершится", "Deadlock", "Паника", "Бесконечный цикл"],
+      "correctAnswerId": 0,
+      "explanation": "Каналы синхронизируют передачу данных, код завершится корректно."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int, 1)\n    go func() {\n        select {\n        case ch <- 1:\n            fmt.Println(\"Sent\")\n        default:\n            fmt.Println(\"Default\")\n        }\n    }()\n    time.Sleep(1)\n}",
+      "answers": ["Sent", "Default", "Паника", "Ничего"],
+      "correctAnswerId": 0,
+      "explanation": "Буфер позволяет записать 1, выполняется case с отправкой."
+    },
+    {
+      "question": "Что делает select без case?",
+      "code": "package main\n\nfunc main() {\n    go func() {\n        select {}\n    }()\n    time.Sleep(1)\n}",
+      "answers": ["Завершает горутину", "Блокирует горутину", "Паника", "Ничего"],
+      "correctAnswerId": 1,
+      "explanation": "Пустой select {} блокирует горутину навсегда."
+    },
+    {
+      "question": "Что произойдёт в этом коде?",
+      "code": "package main\n\nfunc main() {\n    runtime.GOMAXPROCS(1)\n    go func() {\n        for {}\n    }()\n    time.Sleep(1)\n    fmt.Println(\"Done\")\n}",
+      "answers": ["Выведет 'Done'", "Зависнет", "Паника", "Завершится"],
+      "correctAnswerId": 1,
+      "explanation": "С GOMAXPROCS=1 бесконечный цикл в горутине не даёт шанса main выполниться."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int)\n    go func() {\n        ch <- 1\n        runtime.Goexit()\n        ch <- 2\n    }()\n    fmt.Println(<-ch)\n}",
+      "answers": ["1", "2", "Паника", "Deadlock"],
+      "correctAnswerId": 0,
+      "explanation": "runtime.Goexit() завершает горутину после отправки 1, 2 не отправляется."
+    },
+    {
+      "question": "Какой максимальный размер буфера канала?",
+      "answers": ["Нет ограничения", "2^32 - 1", "Зависит от памяти", "2^64 - 1"],
+      "correctAnswerId": 2,
+      "explanation": "Размер буфера ограничен доступной памятью и реализацией runtime."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int)\n    go func() {\n        for i := 0; i < 2; i++ {\n            ch <- i\n        }\n        close(ch)\n    }()\n    for v := range ch {\n        fmt.Println(v)\n    }\n}",
+      "answers": ["0, 1", "1, 0", "Паника", "Deadlock"],
+      "correctAnswerId": 0,
+      "explanation": "Канал закрывается после отправки 0 и 1, range выводит их по порядку."
+    },
+    {
+      "question": "Что произойдёт в этом коде?",
+      "code": "package main\n\nfunc main() {\n    var mu sync.Mutex\n    go func() {\n        mu.Lock()\n        mu.Lock()\n    }()\n    time.Sleep(1)\n}",
+      "answers": ["Успешно завершится", "Deadlock", "Паника", "Ничего"],
+      "correctAnswerId": 1,
+      "explanation": "Повторный вызов Lock на том же мьютексе в одной горутине вызывает deadlock."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    ch := make(chan int)\n    go func() {\n        defer close(ch)\n        ch <- 1\n    }()\n    fmt.Println(<-ch)\n    fmt.Println(<-ch)\n}",
+      "answers": ["1, 0", "1, паника", "Deadlock", "1, 1"],
+      "correctAnswerId": 0,
+      "explanation": "После 1 канал закрывается через defer, второе чтение возвращает 0."
+    }
+  ]
+}

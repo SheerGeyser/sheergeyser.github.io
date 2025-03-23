@@ -1,0 +1,185 @@
+{
+  "title": "Квиз по аномалиям в PostgreSQL",
+  "questions": [
+    {
+      "question": "Что такое аномалия в контексте баз данных?",
+      "answers": ["Ошибка в коде SQL", "Нежелательное поведение при параллельной работе с данными", "Сбой сервера", "Потеря данных из-за сбоя питания"],
+      "correctAnswerId": 1,
+      "explanation": "Аномалия — это нежелательное поведение, возникающее из-за параллельного выполнения транзакций."
+    },
+    {
+      "question": "Какая аномалия возникает, когда одна транзакция читает данные, изменённые другой, ещё не зафиксированной транзакцией?",
+      "answers": ["Lost Update", "Dirty Read", "Non-Repeatable Read", "Phantom Read"],
+      "correctAnswerId": 1,
+      "explanation": "Dirty Read (грязное чтение) — чтение незавершённых изменений другой транзакции."
+    },
+    {
+      "question": "Как называется аномалия, когда обновление данных одной транзакцией теряется из-за перезаписи другой?",
+      "answers": ["Dirty Read", "Lost Update", "Phantom Read", "Write Skew"],
+      "correctAnswerId": 1,
+      "explanation": "Lost Update (потерянное обновление) происходит, когда изменения одной транзакции перезаписываются другой."
+    },
+    {
+      "question": "Что такое Non-Repeatable Read?",
+      "answers": ["Чтение данных, которые позже удаляются", "Повторное чтение даёт разные результаты из-за изменений", "Чтение фантомных строк", "Ошибка при чтении данных"],
+      "correctAnswerId": 1,
+      "explanation": "Non-Repeatable Read — повторное чтение в одной транзакции возвращает разные данные из-за изменений другой транзакции."
+    },
+    {
+      "question": "Какая аномалия связана с появлением новых строк в результате выполнения запроса в одной транзакции?",
+      "answers": ["Dirty Read", "Lost Update", "Phantom Read", "Non-Repeatable Read"],
+      "correctAnswerId": 2,
+      "explanation": "Phantom Read (фантомное чтение) — появление новых строк в результате параллельных изменений."
+    },
+    {
+      "question": "Какой уровень изоляции в PostgreSQL предотвращает Dirty Read?",
+      "answers": ["Read Uncommitted", "Read Committed", "Repeatable Read", "Serializable"],
+      "correctAnswerId": 1,
+      "explanation": "Read Committed предотвращает чтение незавершённых данных."
+    },
+    {
+      "question": "Какой уровень изоляции допускает аномалию Phantom Read?",
+      "answers": ["Read Committed", "Repeatable Read", "Serializable", "Read Uncommitted"],
+      "correctAnswerId": 1,
+      "explanation": "Repeatable Read не предотвращает Phantom Read, в отличие от Serializable."
+    },
+    {
+      "question": "Что делает команда LOCK TABLE в PostgreSQL?",
+      "answers": ["Блокирует сервер", "Ограничивает доступ к таблице", "Удаляет таблицу", "Создаёт копию таблицы"],
+      "correctAnswerId": 1,
+      "explanation": "LOCK TABLE ограничивает доступ к таблице для предотвращения аномалий."
+    },
+    {
+      "question": "Какая аномалия может возникнуть при использовании уровня Read Uncommitted?",
+      "answers": ["Lost Update", "Dirty Read", "Phantom Read", "Write Skew"],
+      "correctAnswerId": 1,
+      "explanation": "Read Uncommitted допускает Dirty Read, так как читает незавершённые изменения."
+    },
+    {
+      "question": "Какой уровень изоляции обеспечивает полную защиту от всех аномалий?",
+      "answers": ["Read Committed", "Repeatable Read", "Serializable", "Read Uncommitted"],
+      "correctAnswerId": 2,
+      "explanation": "Serializable обеспечивает полную изоляцию транзакций."
+    },
+    {
+      "question": "Что такое Write Skew?",
+      "answers": ["Потеря данных при записи", "Аномалия при параллельной записи с несогласованными условиями", "Ошибка блокировки", "Чтение устаревших данных"],
+      "correctAnswerId": 1,
+      "explanation": "Write Skew возникает, когда транзакции записывают данные на основе устаревших предположений."
+    },
+    {
+      "question": "Какой оператор завершает транзакцию с сохранением изменений?",
+      "answers": ["ROLLBACK", "COMMIT", "END", "SAVE"],
+      "correctAnswerId": 1,
+      "explanation": "COMMIT фиксирует изменения транзакции."
+    },
+    {
+      "question": "Что произойдёт при выполнении ROLLBACK?",
+      "answers": ["Данные сохраняются", "Транзакция отменяется", "Создаётся точка сохранения", "Блокируется таблица"],
+      "correctAnswerId": 1,
+      "explanation": "ROLLBACK откатывает все изменения текущей транзакции."
+    },
+    {
+      "question": "Какой уровень изоляции по умолчанию используется в PostgreSQL?",
+      "answers": ["Read Uncommitted", "Read Committed", "Repeatable Read", "Serializable"],
+      "correctAnswerId": 1,
+      "explanation": "Read Committed — уровень изоляции по умолчанию в PostgreSQL."
+    },
+    {
+      "question": "Что такое SAVEPOINT в PostgreSQL?",
+      "answers": ["Точка сохранения внутри транзакции", "Полный бэкап базы данных", "Блокировка данных", "Создание индекса"],
+      "correctAnswerId": 0,
+      "explanation": "SAVEPOINT позволяет откатить часть транзакции до указанной точки."
+    },
+    {
+      "question": "Как откатить транзакцию до определённой точки сохранения?",
+      "answers": ["ROLLBACK TO SAVEPOINT", "COMMIT TO SAVEPOINT", "REVERT SAVEPOINT", "UNDO SAVEPOINT"],
+      "correctAnswerId": 0,
+      "explanation": "ROLLBACK TO SAVEPOINT откатывает изменения до указанного SAVEPOINT."
+    },
+    {
+      "question": "Какая команда освобождает точку сохранения?",
+      "answers": ["DELETE SAVEPOINT", "RELEASE SAVEPOINT", "DROP SAVEPOINT", "FREE SAVEPOINT"],
+      "correctAnswerId": 1,
+      "explanation": "RELEASE SAVEPOINT удаляет точку сохранения, не откатывая изменения."
+    },
+    {
+      "question": "Какой тип блокировки предотвращает запись в таблицу другими транзакциями?",
+      "answers": ["SHARE", "EXCLUSIVE", "ACCESS SHARE", "ROW SHARE"],
+      "correctAnswerId": 1,
+      "explanation": "EXCLUSIVE блокирует запись в таблицу другими транзакциями."
+    },
+    {
+      "question": "Что такое deadlock в PostgreSQL?",
+      "answers": ["Ошибка синтаксиса", "Взаимная блокировка транзакций", "Потеря данных", "Переполнение памяти"],
+      "correctAnswerId": 1,
+      "explanation": "Deadlock — это ситуация, когда транзакции блокируют друг друга, ожидая освобождения ресурсов."
+    },
+    {
+      "question": "Как PostgreSQL разрешает deadlock?",
+      "answers": ["Перезапуском сервера", "Автоматическим откатом одной из транзакций", "Блокировкой базы", "Ожиданием таймаута"],
+      "correctAnswerId": 1,
+      "explanation": "PostgreSQL автоматически откатывает одну из транзакций при обнаружении deadlock."
+    },
+    {
+      "question": "Что такое MVCC в PostgreSQL?",
+      "answers": ["Механизм кэширования", "Многバージонное управление конкурентным доступом", "Система резервного копирования", "Алгоритм сжатия данных"],
+      "correctAnswerId": 1,
+      "explanation": "MVCC (Multiversion Concurrency Control) обеспечивает параллельный доступ с сохранением версий данных."
+    },
+    {
+      "question": "Как MVCC помогает избежать аномалий?",
+      "answers": ["Блокирует все транзакции", "Создаёт копии данных для каждой транзакции", "Запрещает параллельные операции", "Ограничивает доступ к таблицам"],
+      "correctAnswerId": 1,
+      "explanation": "MVCC создаёт изолированные версии данных для каждой транзакции."
+    },
+    {
+      "question": "Какой параметр конфигурации задаёт время ожидания блокировки?",
+      "answers": ["lock_timeout", "deadlock_timeout", "transaction_timeout", "wait_timeout"],
+      "correctAnswerId": 0,
+      "explanation": "lock_timeout определяет, сколько времени транзакция ждёт снятия блокировки."
+    },
+    {
+      "question": "Что произойдёт, если превышен deadlock_timeout?",
+      "answers": ["Транзакция завершится успешно", "PostgreSQL проверит наличие deadlock", "Сервер перезапустится", "Данные удалятся"],
+      "correctAnswerId": 1,
+      "explanation": "deadlock_timeout запускает проверку на взаимные блокировки."
+    },
+    {
+      "question": "Какой уровень изоляции допускает Write Skew?",
+      "answers": ["Read Committed", "Repeatable Read", "Serializable", "Read Uncommitted"],
+      "correctAnswerId": 1,
+      "explanation": "Repeatable Read не защищает от Write Skew, в отличие от Serializable."
+    },
+    {
+      "question": "Что такое SERIALIZABLE SNAPSHOT в PostgreSQL?",
+      "answers": ["Уровень изоляции с моментальными снимками", "Резервная копия базы", "Механизм кэширования", "Тип блокировки"],
+      "correctAnswerId": 0,
+      "explanation": "SERIALIZABLE SNAPSHOT — это реализация Serializable с использованием моментальных снимков."
+    },
+    {
+      "question": "Какой оператор позволяет явно заблокировать строки?",
+      "answers": ["SELECT FOR UPDATE", "LOCK ROWS", "BLOCK ROWS", "HOLD ROWS"],
+      "correctAnswerId": 0,
+      "explanation": "SELECT FOR UPDATE блокирует выбранные строки для последующего обновления."
+    },
+    {
+      "question": "Что произойдёт, если две транзакции одновременно выполняют SELECT FOR UPDATE на одну строку?",
+      "answers": ["Обе завершатся успешно", "Одна будет ждать освобождения строки", "Произойдёт сбой", "Данные удалятся"],
+      "correctAnswerId": 1,
+      "explanation": "Одна транзакция будет ждать, пока другая не завершится."
+    },
+    {
+      "question": "Какой тип аномалии чаще всего связан с недостаточной изоляцией?",
+      "answers": ["Dirty Read", "Lost Update", "Phantom Read", "Non-Repeatable Read"],
+      "correctAnswerId": 0,
+      "explanation": "Dirty Read чаще всего возникает при низком уровне изоляции, таком как Read Uncommitted."
+    },
+    {
+      "question": "Какой инструмент в PostgreSQL помогает анализировать блокировки?",
+      "answers": ["pg_stat_activity", "pg_locks", "pg_block", "pg_deadlock"],
+      "correctAnswerId": 1,
+      "explanation": "pg_locks предоставляет информацию о текущих блокировках в базе данных."
+    }
+  ]
+}
