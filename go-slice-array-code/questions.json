@@ -1,0 +1,377 @@
+{
+  "title": "Квиз по массивам и слайсам в Go",
+  "questions": [
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    a := [3]int{1, 2, 3}\n    b := a\n    b[0] = 100\n    fmt.Println(a[0])\n}",
+      "answers": [
+        "1",
+        "100",
+        "Ошибка компиляции",
+        "Неопределенное поведение"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Массивы передаются по значению, поэтому `a` останется неизменным."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := arr[1:3]\n    fmt.Println(len(slice), cap(slice))\n}",
+      "answers": [
+        "2 2",
+        "2 4",
+        "5 5",
+        "Ошибка компиляции"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "Длина слайса равна 2 (элементы arr[1] и arr[2]), а capacity – количество элементов от начального индекса до конца массива (arr[1]...arr[4])."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    c := make([]int, 0, 5)\n    c = append(c, 1, 2, 3)\n    d := c\n    d = append(d, 4, 5)\n    fmt.Println(c, d)\n}",
+      "answers": [
+        "[1 2 3] [1 2 3 4 5]",
+        "[1 2 3 4 5] [1 2 3 4 5]",
+        "[1 2 3 4 5] [1 2 3]",
+        "Ошибка компиляции"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "При добавлении элементов append() может выделить новый массив, из-за чего `d` и `c` могут оказаться разными."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    slice := []int{1, 2, 3, 4, 5}\n    slice = slice[:0]\n    fmt.Println(len(slice), cap(slice))\n}",
+      "answers": [
+        "0 0",
+        "0 5",
+        "5 5",
+        "Ошибка компиляции"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "Слайс остается связанным с исходным массивом, поэтому его capacity не изменяется."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc modify(s []int) {\n    s[0] = 42\n}\n\nfunc main() {\n    arr := [3]int{1, 2, 3}\n    slice := arr[:]\n    modify(slice)\n    fmt.Println(arr[0])\n}",
+      "answers": [
+        "1",
+        "42",
+        "Ошибка компиляции",
+        "Неопределенное поведение"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "Слайсы передаются по ссылке, поэтому изменение `s` внутри функции изменит оригинальный массив."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [3]int{1, 2, 3}\n    slice := arr[:]\n    slice[0] = 100\n    fmt.Println(arr[0])\n}",
+      "answers": [
+        "100",
+        "1",
+        "Ошибка компиляции",
+        "Неопределенное поведение"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайсы — это ссылки на массивы, поэтому изменение элемента в слайсе также изменяет оригинальный массив."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    slice := []int{1, 2, 3}\n    slice = append(slice, 4)\n    fmt.Println(len(slice), cap(slice))\n}",
+      "answers": [
+        "3 3",
+        "4 4",
+        "3 6",
+        "4 6"
+      ],
+      "correctAnswerId": 3,
+      "explanation": "При добавлении элемента в слайс с достаточной вместимостью `cap` останется прежним, но если capacity меньше, то она увеличится."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [3]int{1, 2, 3}\n    slice := arr[:]\n    slice = append(slice, 4)\n    fmt.Println(len(slice), cap(slice))\n}",
+      "answers": [
+        "3 3",
+        "4 6",
+        "4 4",
+        "3 4"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "При добавлении элемента в слайс, если capacity недостаточно, создается новый массив с удвоенной емкостью."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [3]int{1, 2, 3}\n    slice := arr[:]\n    slice[1] = 10\n    fmt.Println(arr[1])\n}",
+      "answers": [
+        "10",
+        "2",
+        "1",
+        "Ошибка компиляции"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайс ссылается на массив, и изменения слайса влияют на оригинальный массив."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [3]int{1, 2, 3}\n    slice := arr[1:2]\n    fmt.Println(len(slice), cap(slice))\n}",
+      "answers": [
+        "1 2",
+        "1 1",
+        "2 3",
+        "2 2"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайс имеет длину 1, но его capacity — 2 (от `arr[1]` до конца массива)."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := arr[1:4]\n    fmt.Println(slice)\n}",
+      "answers": [
+        "[2 3 4]",
+        "[1 2 3 4]",
+        "[2 3 4 5]",
+        "[1 2 3]"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайс `arr[1:4]` включает элементы с индекса 1 по индекс 3."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := append([]int{}, arr[:2]...)\n    fmt.Println(slice)\n}",
+      "answers": [
+        "[1 2]",
+        "[1 2 3]",
+        "[1 2 3 4]",
+        "[1 2 3 4 5]"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "При использовании `append` создается новый слайс, содержащий только первые два элемента массива."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := arr[2:]\n    fmt.Println(slice)\n}",
+      "answers": [
+        "[3 4 5]",
+        "[2 3 4 5]",
+        "[1 2 3 4 5]",
+        "[3 4]"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайс включает элементы от индекса 2 до конца массива."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [3]int{1, 2, 3}\n    slice := arr[:2]\n    slice[0] = 100\n    fmt.Println(arr[0])\n}",
+      "answers": [
+        "100",
+        "1",
+        "Ошибка компиляции",
+        "Неопределенное поведение"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайс — это ссылка на массив, изменения слайса изменяют массив."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [3]int{1, 2, 3}\n    slice := arr[1:]\n    fmt.Println(len(slice), cap(slice))\n}",
+      "answers": [
+        "2 2",
+        "3 3",
+        "2 4",
+        "3 5"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Длина слайса 2, так как слайс начинается с `arr[1]`, а его capacity равна 2."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := arr[2:4]\n    slice = append(slice, 6)\n    fmt.Println(slice)\n}",
+      "answers": [
+        "[3 4 6]",
+        "[2 3 4 6]",
+        "[1 2 3 4 6]",
+        "[3 4]"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайс имеет элементы от индекса 2 до 3. После использования append() добавляется новый элемент."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := arr[1:3]\n    slice = append(slice, 6)\n    fmt.Println(slice)\n}",
+      "answers": [
+        "[2 3 6]",
+        "[2 3 4 5 6]",
+        "[1 2 3 4 5 6]",
+        "[3 4 5]"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "После использования append() слайс расширяется, добавляя новый элемент в конец."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := arr[1:3]\n    slice[0] = 100\n    fmt.Println(arr[1])\n}",
+      "answers": [
+        "100",
+        "2",
+        "Ошибка компиляции",
+        "Неопределенное поведение"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайс передает ссылку на массив, изменения в слайсе изменяют оригинальный массив."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := append([]int{}, arr[2:]...)\n    fmt.Println(slice)\n}",
+      "answers": [
+        "[3 4 5]",
+        "[1 2 3 4 5]",
+        "[1 2 3]",
+        "[2 3 4 5]"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "При добавлении элементов слайса с помощью `append`, создается новый слайс, который включает только элементы от индекса 2."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := append(arr[:], 6)\n    fmt.Println(slice)\n}",
+      "answers": [
+        "[1 2 3 4 5 6]",
+        "[1 2 3 4 5]",
+        "[1 2 3 4]",
+        "[6]"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "После добавления элемента `append` создает новый слайс с дополнительным элементом."
+    },
+    {
+      "question": "Что выведет следующий код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    arr := [5]int{1, 2, 3, 4, 5}\n    slice := arr[:2]\n    fmt.Println(slice)\n}",
+      "answers": [
+        "[1 2]",
+        "[1 2 3]",
+        "[1 2 3 4]",
+        "[1 2 3 4 5]"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайс включает первые два элемента массива."
+    },
+    {
+      "question": "Что произойдет при выполнении этого кода?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := []int{1, 2, 3}\n    s = append(s[:1], s[2:]...)\n    fmt.Println(s)\n}",
+      "answers": [
+        "[1 3]",
+        "[1 2]",
+        "[2 3]",
+        "runtime error"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Операция `s[:1]` берет первый элемент, а `s[2:]...` добавляет все элементы начиная с третьего. Итог: `[1 3]`."
+    },
+    {
+      "question": "Какой будет результат выполнения?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := make([]int, 0, 5)\n    s = append(s, 1, 2, 3, 4, 5, 6)\n    fmt.Println(cap(s))\n}",
+      "answers": [
+        "5",
+        "6",
+        "10",
+        "runtime error"
+      ],
+      "correctAnswerId": 2,
+      "explanation": "При превышении capacity слайс перераспределяется, обычно удваивая размер (5 * 2 = 10)."
+    },
+    {
+      "question": "Что выведет этот код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := []int{1, 2, 3}\n    s1 := s[1:2]\n    s1 = append(s1, 4)\n    fmt.Println(s)\n}",
+      "answers": [
+        "[1 2 3]",
+        "[1 2 4]",
+        "[1 2 3 4]",
+        "runtime error"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "Слайс `s1` использует тот же базовый массив, и `append` перезаписывает элемент на позиции 2, изменяя `s` на `[1 2 4]`."
+    },
+    {
+      "question": "Какой будет длина и емкость слайса?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := make([]int, 3, 10)\n    s = s[1:5]\n    fmt.Println(len(s), cap(s))\n}",
+      "answers": [
+        "4 9",
+        "4 10",
+        "5 9",
+        "5 10"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "После среза `s[1:5]` длина становится 4 (5-1), а емкость — 9 (10-1), так как отсчет идет от начальной позиции среза."
+    },
+    {
+      "question": "Что выведет код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := []int{1, 2, 3}\n    s = append(s[:0], s[1:]...)\n    fmt.Println(s)\n}",
+      "answers": [
+        "[2 3]",
+        "[1 2]",
+        "[1 2 3]",
+        "пустой слайс"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`s[:0]` обнуляет слайс, а `s[1:]...` добавляет элементы со второго, итог: `[2 3]`."
+    },
+    {
+      "question": "Что произойдет в этом коде?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    var s []int\n    s = append(s[0:], 1)\n    fmt.Println(s)\n}",
+      "answers": [
+        "[1]",
+        "panic",
+        "[0 1]",
+        "ничего не выведет"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Слайс `s` — nil, срез `s[0:]` возвращает пустой слайс, а `append` добавляет к нему элемент 1, создавая новый слайс `[1]`."
+    },
+    {
+      "question": "Какой будет результат?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := []int{1, 2, 3, 4}\n    s1 := s[1:3]\n    s1[0] = 99\n    fmt.Println(s)\n}",
+      "answers": [
+        "[1 2 3 4]",
+        "[1 99 3 4]",
+        "[99 2 3 4]",
+        "[1 99 99 4]"
+      ],
+      "correctAnswerId": 1,
+      "explanation": "`s1` — срез от `s`, изменение `s1[0]` меняет второй элемент исходного массива, итог: `[1 99 3 4]`."
+    },
+    {
+      "question": "Что выведет код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := make([]int, 2, 4)\n    s[0], s[1] = 1, 2\n    s = s[:4]\n    fmt.Println(s)\n}",
+      "answers": [
+        "[1 2 0 0]",
+        "[1 2]",
+        "panic",
+        "[0 0 1 2]"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "Срез `s[:4]` расширяет длину до 4 в пределах capacity, добавляя нули: `[1 2 0 0]`."
+    },
+    {
+      "question": "Какой будет емкость нового слайса?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := make([]int, 0, 3)\n    for i := 0; i < 4; i++ {\n        s = append(s, i)\n    }\n    fmt.Println(cap(s))\n}",
+      "answers": [
+        "3",
+        "4",
+        "6",
+        "8"
+      ],
+      "correctAnswerId": 2,
+      "explanation": "При превышении capacity (3) слайс увеличивается примерно в 2 раза, ближайшая степень двойки для 4 — 6."
+    },
+    {
+      "question": "Что выведет этот код?",
+      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := []int{1, 2, 3}\n    s = append(s, s...)\n    fmt.Println(s)\n}",
+      "answers": [
+        "[1 2 3 1 2 3]",
+        "[1 2 3]",
+        "[1 2 3 0 0 0]",
+        "panic"
+      ],
+      "correctAnswerId": 0,
+      "explanation": "`s...` разворачивает слайс, и `append` добавляет его элементы к самому себе: `[1 2 3 1 2 3]`."
+    }
+  ]
+}

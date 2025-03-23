@@ -79,7 +79,6 @@
 <script>
     let quizData = {};
     let currentQuestionIndex = 0;
-    let usedQuestions = [];
     let correctAnswers = 0;
     let wrongAnswers = [];
 
@@ -94,32 +93,25 @@
         .then(data => {
             quizData = data;
             document.getElementById('quizTitle').textContent = quizData.title;
-            loadRandomQuestion();
+            loadNextQuestion();
         })
         .catch(error => {
             window.location.href = 'index.html';
         });
 
-    function loadRandomQuestion() {
-        if (usedQuestions.length === quizData.questions.length) {
+    function loadNextQuestion() {
+        if (currentQuestionIndex >= quizData.questions.length) {
             showResults();
             return;
         }
 
-        let randomIndex;
-        do {
-            randomIndex = Math.floor(Math.random() * quizData.questions.length);
-        } while (usedQuestions.includes(randomIndex));
-
-        usedQuestions.push(randomIndex);
-        currentQuestionIndex = randomIndex;
         displayQuestion();
 
-        const progress = (usedQuestions.length / quizData.questions.length) * 100;
+        const progress = ((currentQuestionIndex + 1) / quizData.questions.length) * 100;
         const progressBar = document.getElementById('progressBar');
         progressBar.style.width = `${progress}%`;
         progressBar.setAttribute('aria-valuenow', progress);
-        progressBar.textContent = `${usedQuestions.length} из ${quizData.questions.length}`;
+        progressBar.textContent = `${currentQuestionIndex + 1} из ${quizData.questions.length}`;
     }
 
     function shuffleArray(array) {
@@ -239,7 +231,8 @@
     }
 
     document.getElementById('nextBtn').addEventListener('click', function() {
-        loadRandomQuestion();
+        currentQuestionIndex++;
+        loadNextQuestion();
     });
 
     document.addEventListener('change', function(e) {
