@@ -101,8 +101,8 @@
       "question": "Что произойдёт в этом коде?",
       "code": "package main\n\nfunc main() {\n    ch := make(chan int)\n    go func() { close(ch) }()\n    ch <- 1\n}",
       "answers": ["Запишет 1", "Паника", "Deadlock", "Ничего"],
-      "correctAnswerId": 2,
-      "explanation": "Запись в канал блокирует main, а закрытие канала другой горутиной не успевает, возникает deadlock."
+      "correctAnswerId": 1,
+      "explanation": "Запись в канал блокирует main, возникает `panic: send on closed channel`."
     },
     {
       "question": "Какой начальный размер стека горутины в Go 1.22?",
