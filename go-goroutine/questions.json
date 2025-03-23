@@ -16,7 +16,6 @@
     },
     {
       "question": "Как правильно дождаться завершения горутины?",
-      "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    go fmt.Println(\"Hello\")\n    // Что добавить сюда?\n    fmt.Println(\"Main\")\n}",
       "answers": ["time.Sleep(1)", "sync.WaitGroup", "runtime.Gosched()", "close(ch)"],
       "correctAnswerId": 1,
       "explanation": "sync.WaitGroup — надёжный способ ожидания завершения горутин."
